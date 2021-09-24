@@ -9,14 +9,12 @@ spring:
         git:
           uri: https://github.com/MJPlim/Kati-Config.git
   rabbitmq:
-    host: 127.0.0.1
+    host: '{cipher}598e6e0d98072f79df1255101672d1cc1fbceddeadf75bda41e50913ec5ee785'
     port: 5672
-    username: guest
-    password: guest
+    username: '{cipher}bae3ee4c5cc2aa17fd2e038fbe297b8803e48c59fe04a01f6e803b83584358bf'
+    password: '{cipher}2011ba8a44b0b5373d3bcb55e61a879a96b18284095d897349a846f71928a571'
 management:
   endpoints:
     web:
       exposure:
         include: health, busrefresh
-encrypt:
-  key: plimisbest
