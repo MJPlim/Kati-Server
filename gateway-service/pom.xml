@@ -94,6 +94,8 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
 				</configuration>
 			</plugin>
 		</plugins>
