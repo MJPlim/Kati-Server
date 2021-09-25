@@ -7,7 +7,60 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/MJPlim/Kati-Config.git
+          uri: git@github.com:MJPlim/Kati-Config.git
+          ignore-local-ssh-settings: true
+          private-key: |
+            -----BEGIN RSA PRIVATE KEY-----
+            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
+            -----END RSA PRIVATE KEY-----
   rabbitmq:
     host: '{cipher}598e6e0d98072f79df1255101672d1cc1fbceddeadf75bda41e50913ec5ee785'
     port: 5672
