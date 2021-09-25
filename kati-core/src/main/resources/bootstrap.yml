@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    config:
+      uri: http://3.38.58.189:8888
+      name: katicore
+  profiles:
+    active: prod
