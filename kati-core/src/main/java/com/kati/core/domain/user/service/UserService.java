@@ -4,6 +4,7 @@ import com.kati.core.domain.favorite.repository.FavoriteRepository;
 import com.kati.core.domain.post.repository.CommentRepository;
 import com.kati.core.domain.review.repository.ReviewRepository;
 import com.kati.core.domain.user.domain.User;
+import com.kati.core.domain.user.domain.UserStateType;
 import com.kati.core.domain.user.dto.*;
 import com.kati.core.domain.user.exception.*;
 import com.kati.core.domain.user.repository.UserRepository;
@@ -86,7 +87,7 @@ public class UserService {
     public User findPassword(FindPasswordRequest dto) {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException(UserExceptionMessage.USERNAME_NOT_FOUND_EXCEPTION_MESSAGE.getMessage()));
-
+        this.validateUser(user);
         EmailAuthCodeGenerator authCodeGenerator = new EmailAuthCodeGenerator();
         String authCode = authCodeGenerator.generateAuthCode();
         user.updatePassword(passwordEncoder.encode(authCode));
@@ -95,6 +96,11 @@ public class UserService {
         emailUtil.sendEmail(dto.getEmail(), EmailSubject.FIND_PASSWORD_REQUEST, message);
 
         return user;
+    }
+
+    private void validateUser(User user) {
+        if (user.getState().equals(UserStateType.DELETED)) throw new WithdrawalAccountException();
+        if (user.getState().equals(UserStateType.WAIT)) throw new EmailNotVerifiedException();
     }
 
     @Transactional
