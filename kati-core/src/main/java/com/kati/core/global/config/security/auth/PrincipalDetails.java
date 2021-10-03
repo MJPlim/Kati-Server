@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.Map;
 
 @NoArgsConstructor
-public class PrincipalDetails implements UserDetails {
+public class PrincipalDetails implements UserDetails, OAuth2User {
 
     private User user;
     private Map<String, Object> attributes;
@@ -63,4 +63,13 @@ public class PrincipalDetails implements UserDetails {
         return user.getState().equals(UserStateType.NORMAL);
     }
 
+    @Override
+    public Map<String, Object> getAttributes() {
+        return this.attributes;
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
 }
