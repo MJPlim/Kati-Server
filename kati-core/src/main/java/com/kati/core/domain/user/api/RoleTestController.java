@@ -25,7 +25,7 @@ public class RoleTestController {
         return "admin";
     }
 
-    @GetMapping("/api/heath/check")
+    @GetMapping("/api/health/check")
     public String healthCheck() {
         return this.hello;
     }
