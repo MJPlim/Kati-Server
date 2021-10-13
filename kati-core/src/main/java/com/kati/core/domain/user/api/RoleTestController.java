@@ -2,12 +2,16 @@ package com.kati.core.domain.user.api;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Api(tags = {"Role Test"})
 @RestController
 public class RoleTestController {
+
+    @Value("${message.hello}")
+    private String hello;
 
     @ApiOperation(value = "유저 권한 테스트", notes = "유저의 권한을 테스트한다")
     @GetMapping("/api/v1/user")
@@ -19,6 +23,11 @@ public class RoleTestController {
     @GetMapping("/api/v1/admin")
     public String admin() {
         return "admin";
+    }
+
+    @GetMapping("/api/heath/check")
+    public String healthCheck() {
+        return this.hello;
     }
 
 }
