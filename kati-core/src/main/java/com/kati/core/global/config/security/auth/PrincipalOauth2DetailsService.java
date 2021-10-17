@@ -4,10 +4,10 @@ import com.kati.core.domain.user.domain.User;
 import com.kati.core.domain.user.domain.UserProvider;
 import com.kati.core.domain.user.domain.UserRoleType;
 import com.kati.core.domain.user.domain.UserStateType;
-import com.kati.core.domain.user.exception.EmailDuplicateException;
 import com.kati.core.domain.user.exception.UserExceptionMessage;
 import com.kati.core.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -26,7 +26,7 @@ public class PrincipalOauth2DetailsService extends DefaultOAuth2UserService {
 
 
     @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws IllegalArgumentException, OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         String provider = userRequest.getClientRegistration().getClientName();
 
@@ -47,8 +47,9 @@ public class PrincipalOauth2DetailsService extends DefaultOAuth2UserService {
         final String finalNickname = nickname;
 
         User user = userRepository.findByEmailAndProviderIs(email, userProvider).orElseGet(() -> {
-            if (userRepository.existsByEmail(finalEmail))
-                throw new EmailDuplicateException(UserExceptionMessage.EMAIL_DUPLICATE_EXCEPTION_MESSAGE);
+            if (userRepository.existsByEmail(finalEmail)) {
+                throw new AuthenticationServiceException(UserExceptionMessage.EMAIL_DUPLICATE_EXCEPTION_MESSAGE.getMessage());
+            }
             System.out.println("created email");
             return userRepository.save(User.builder()
                     .email(finalEmail)
