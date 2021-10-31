@@ -1,5 +1,6 @@
 package com.kati.core.domain.review.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
 
@@ -8,6 +9,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Getter
+@AllArgsConstructor
 public class CreateReviewRequest {
 
 	@NotNull(message = "제품 아이디를 입력해주세요.")
