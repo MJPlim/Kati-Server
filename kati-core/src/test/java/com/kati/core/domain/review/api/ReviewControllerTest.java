@@ -145,7 +145,7 @@ class ReviewControllerTest {
     @WithUserDetails(value = "cksgh3422@nate.com", userDetailsServiceBeanName = "principalDetailsService")
     void updateReview() throws Exception {
         Map<Object, String> map = new HashMap<>();
-        map.put("reviewId", "387");
+        map.put("reviewId", "388");
         map.put("reviewRating", "4");
         map.put("reviewDescription", "수정");
         String principalUser = objectMapper.writeValueAsString(new PrincipalDetails(user));
