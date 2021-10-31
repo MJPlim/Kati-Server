@@ -29,13 +29,13 @@ public class deleteuserTest {
 //    }
 
 
-    @Test
-    void findTest(){
-        User user = userRepository.findByEmailAndProviderIs("cksgh3422@naver.com", UserProvider.KAKAO).get();
-        System.out.println(user.getName());
-        System.out.println(user.getProvider());
-        Assertions.assertEquals(user.getName(), "정찬호");
-        Assertions.assertNull(user.getName());
-    }
+//    @Test
+//    void findTest(){
+//        User user = userRepository.findByEmailAndProviderIs("cksgh3422@naver.com", UserProvider.KAKAO).get();
+//        System.out.println(user.getName());
+//        System.out.println(user.getProvider());
+//        Assertions.assertEquals(user.getName(), "정찬호");
+//        Assertions.assertNull(user.getName());
+//    }
 
 }
