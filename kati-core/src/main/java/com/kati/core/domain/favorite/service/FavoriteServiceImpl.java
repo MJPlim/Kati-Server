@@ -29,12 +29,11 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
     public List<FavoriteResponse> findAll(PrincipalDetails principalDetails) {
-        User user = this.userService.getUserByPrincipalDetails(principalDetails);
-        List<Favorite> favoriteList = this.favoriteRepository.findAllByUser(user);
-        return favoriteList.stream().map(f -> FavoriteResponse.builder()
-                .favoriteId(f.getId())
-                .food(FoodResponse.from(f.getFood()))
-                .build()).collect(Collectors.toList());
+        return this.favoriteRepository
+                .findAllByUser(this.userService.getUserByPrincipalDetails(principalDetails))
+                .stream()
+                .map(FavoriteResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -42,8 +41,12 @@ public class FavoriteServiceImpl implements FavoriteService {
     public void add(PrincipalDetails principalDetails, Long foodId) throws NoSuchElementException {
         Food food = this.foodService.findById(foodId);
         User user = this.userService.getUserByPrincipalDetails(principalDetails);
-        if (this.favoriteRepository.existsByUserAndFood(user, food)) throw new AlreadyExistsFavoriteException();
+        validateAlreadyExistsFavorite(food, user);
         this.favoriteRepository.save(new Favorite(user, food));
+    }
+
+    private void validateAlreadyExistsFavorite(Food food, User user) {
+        if (this.favoriteRepository.existsByUserAndFood(user, food)) throw new AlreadyExistsFavoriteException();
     }
 
     @Transactional
