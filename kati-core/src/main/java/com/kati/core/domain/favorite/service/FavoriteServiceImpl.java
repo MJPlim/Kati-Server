@@ -2,91 +2,63 @@ package com.kati.core.domain.favorite.service;
 
 import com.kati.core.domain.favorite.domain.Favorite;
 import com.kati.core.domain.favorite.dto.FavoriteResponse;
-import com.kati.core.domain.user.exception.UserExceptionMessage;
-import com.kati.core.domain.user.repository.UserRepository;
+import com.kati.core.domain.favorite.exception.AlreadyExistsFavoriteException;
 import com.kati.core.domain.favorite.repository.FavoriteRepository;
 import com.kati.core.domain.food.domain.Food;
 import com.kati.core.domain.food.dto.FoodResponse;
-import com.kati.core.domain.food.exception.FoodExceptionMessage;
-import com.kati.core.domain.food.exception.NoFoodException;
-import com.kati.core.domain.food.repository.FoodRepository;
+import com.kati.core.domain.food.exception.NotFoundFoodException;
+import com.kati.core.domain.food.service.FoodService;
 import com.kati.core.domain.user.domain.User;
+import com.kati.core.domain.user.service.UserService;
 import com.kati.core.global.config.security.auth.PrincipalDetails;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
-public class FavoriteServiceImpl implements FavoriteService{
-    private final UserRepository userRepository;
+public class FavoriteServiceImpl implements FavoriteService {
+    private final UserService userService;
+    private final FoodService foodService;
     private final FavoriteRepository favoriteRepository;
-    private final FoodRepository foodRepository;
-
-    @Autowired
-    public FavoriteServiceImpl(UserRepository userRepository, FavoriteRepository favoriteRepository, FoodRepository foodRepository) {
-        this.userRepository = userRepository;
-        this.favoriteRepository = favoriteRepository;
-        this.foodRepository = foodRepository;
-    }
 
     @Override
-    public List<FavoriteResponse> getFavoriteFoodList(PrincipalDetails principalDetails) {
-        User user = this.userRepository.findByEmail(principalDetails.getUsername())
-                                       .orElseThrow(() ->
-                                               new UsernameNotFoundException(UserExceptionMessage.USERNAME_NOT_FOUND_EXCEPTION_MESSAGE.getMessage()));
+    public List<FavoriteResponse> findAll(PrincipalDetails principalDetails) {
+        User user = this.userService.getUserByPrincipalDetails(principalDetails);
         List<Favorite> favoriteList = this.favoriteRepository.findAllByUser(user);
-
-        List<FavoriteResponse> responses = new ArrayList<>();
-        for (Favorite favorite : favoriteList) {
-            FavoriteResponse response = FavoriteResponse.builder()
-                                                        .favoriteId(favorite.getId())
-                                                        .food(FoodResponse.from(favorite.getFood()))
-                                                        .build();
-            responses.add(response);
-        }
-        return responses;
+        return favoriteList.stream().map(f -> FavoriteResponse.builder()
+                .favoriteId(f.getId())
+                .food(FoodResponse.from(f.getFood()))
+                .build()).collect(Collectors.toList());
     }
 
     @Transactional
     @Override
-    public boolean addFavoriteFood(PrincipalDetails principalDetails, Long foodId) throws NoSuchElementException{
-        Food food = this.foodRepository.findById(foodId).orElseThrow(NoSuchElementException::new);
-        User user = this.userRepository.findByEmail(principalDetails.getUsername())
-                                       .orElseThrow(NoSuchElementException::new);
-
-        if(this.favoriteRepository.existsByUserAndFood(user, food)){
-            return false;
-        }else{
-            this.favoriteRepository.save(Favorite.builder()
-                                                 .user(user)
-                                                 .food(food)
-                                                 .build());
-            return true;
-        }
+    public void add(PrincipalDetails principalDetails, Long foodId) throws NoSuchElementException {
+        Food food = this.foodService.findById(foodId);
+        User user = this.userService.getUserByPrincipalDetails(principalDetails);
+        if (this.favoriteRepository.existsByUserAndFood(user, food)) throw new AlreadyExistsFavoriteException();
+        this.favoriteRepository.save(new Favorite(user, food));
     }
 
     @Transactional
     @Override
-    public void deleteFavoriteFood(PrincipalDetails principalDetails, Long foodId){
-        Food food = this.foodRepository.findById(foodId).orElseThrow(() -> new NoFoodException(FoodExceptionMessage.NO_FOOD_EXCEPTION_MESSAGE));
-        User user = this.userRepository.findByEmail(principalDetails.getUsername())
-                                       .orElseThrow(() -> new UsernameNotFoundException(UserExceptionMessage.USERNAME_NOT_FOUND_EXCEPTION_MESSAGE.getMessage()));
-
-        this.favoriteRepository.deleteByUserAndFood(user, food);
+    public void delete(PrincipalDetails principalDetails, Long foodId) {
+        this.favoriteRepository.deleteByUserAndFood(
+                this.userService.getUserByPrincipalDetails(principalDetails),
+                this.foodService.findById(foodId));
     }
 
     @Override
     public boolean getFavoriteStateForSpecificFood(PrincipalDetails principalDetails, Long foodId) {
-        Food food = this.foodRepository.findById(foodId).orElseThrow(() -> new NoFoodException(FoodExceptionMessage.NO_FOOD_EXCEPTION_MESSAGE));
-        User user = this.userRepository.findByEmail(principalDetails.getUsername())
-                                       .orElseThrow(() -> new UsernameNotFoundException(UserExceptionMessage.USERNAME_NOT_FOUND_EXCEPTION_MESSAGE.getMessage()));
-
-        return this.favoriteRepository.existsByUserAndFood(user, food);
+        return this.favoriteRepository.existsByUserAndFood(
+                this.userService.getUserByPrincipalDetails(principalDetails),
+                this.foodService.findById(foodId));
     }
 
 }

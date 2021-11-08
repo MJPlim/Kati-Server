@@ -54,7 +54,7 @@ public class UserService {
 
     @Transactional
     public User withdraw(PrincipalDetails principal, String password) {
-        User user = getUser(principal);
+        User user = getUserByPrincipalDetails(principal);
         boolean matches = passwordEncoder.matches(password, user.getPassword());
         if (!matches)
             throw new PasswordMismatchException(UserExceptionMessage.PASSWORD_MISMATCH_EXCEPTION_MESSAGE);
@@ -67,7 +67,7 @@ public class UserService {
         if (userRepository.existsBySecondEmail(request.getSecondEmail()))
             throw new SecondEmailDuplicateException(UserExceptionMessage.SECOND_EMAIL_DUPLICATE_EXCEPTION_MESSAGE);
 
-        User user = getUser(principal);
+        User user = getUserByPrincipalDetails(principal);
         user.setSecondEmail(request.getSecondEmail());
 
         return user;
@@ -105,7 +105,7 @@ public class UserService {
 
     @Transactional
     public User modifyPassword(PrincipalDetails principal, ModifyPasswordRequest dto) {
-        User user = getUser(principal);
+        User user = getUserByPrincipalDetails(principal);
         //입력한 비밀번호가 기존 비밀번호와 다를때
         boolean matches1 = passwordEncoder.matches(dto.getBeforePassword(), user.getPassword());
         if (!matches1)
@@ -122,28 +122,27 @@ public class UserService {
     }
 
     public ResponseEntity<UserInfoResponse> getUserInfo(PrincipalDetails principal) {
-        return ResponseEntity.ok(UserInfoResponse.from(getUser(principal)));
+        return ResponseEntity.ok(UserInfoResponse.from(getUserByPrincipalDetails(principal)));
     }
 
     @Transactional
     public ResponseEntity<UserInfoResponse> modifyUserInfo(PrincipalDetails principal, UserInfoModifyRequest request) {
-        return ResponseEntity.ok(UserInfoResponse.from(getUser(principal).modifyUserInfo(request)));
+        return ResponseEntity.ok(UserInfoResponse.from(getUserByPrincipalDetails(principal).modifyUserInfo(request)));
     }
 
     public ResponseEntity<UserSummaryResponse> userSummary(PrincipalDetails principal) {
-        User user = getUser(principal);
+        User user = getUserByPrincipalDetails(principal);
         Long favoriteCount = this.favoriteRepository.countAllByUser(user);
         Long reviewCount = this.reviewRepository.countAllByUser(user);
         return ResponseEntity.ok(UserSummaryResponse.of(user.getName(), favoriteCount, reviewCount));
     }
 
-    private User getUser(PrincipalDetails principal) {
-        return userRepository.findByEmail(principal.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException(UserExceptionMessage.USERNAME_NOT_FOUND_EXCEPTION_MESSAGE.getMessage()));
+    public User getUserByPrincipalDetails(PrincipalDetails principal) {
+        return userRepository.findByEmail(principal.getUsername()).orElseThrow(NotFoundUserException::new);
     }
 
     public ResponseEntity<GetSecondEmailResponse> getSecondEmail(PrincipalDetails principalDetails) {
-        User user = getUser(principalDetails);
+        User user = getUserByPrincipalDetails(principalDetails);
         return ResponseEntity.ok(GetSecondEmailResponse.builder().secondEmail(user.getSecondEmail()).build());
     }
 }

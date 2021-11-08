@@ -60,9 +60,9 @@ class ReviewControllerTest {
         String password = "1234568";
         String principalUser = objectMapper.writeValueAsString(new UserlogInDto(email, password));
         mvc.perform(post("/login")
-                .content(principalUser)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .content(principalUser)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
@@ -73,10 +73,10 @@ class ReviewControllerTest {
         String request = objectMapper.writeValueAsString(new CreateReviewRequest(10102L, 4, "테스트코드입니다."));
         System.out.println(request);
         mvc.perform(post("/api/v1/user/createReview")
-                .content(principalUser)
-                .content(request)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .content(principalUser)
+                        .content(request)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 //                .andExpect(content().json(request));
     }
@@ -84,8 +84,8 @@ class ReviewControllerTest {
     @Test
     void readReview() throws Exception {
         mvc.perform(get("/readReview")
-                .param("foodId", "14461")
-                .param("pageNum", "1"))
+                        .param("foodId", "14461")
+                        .param("pageNum", "1"))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
@@ -95,9 +95,9 @@ class ReviewControllerTest {
     void readLoggedInReview() throws Exception {
         String principalUser = objectMapper.writeValueAsString(new PrincipalDetails(user));
         mvc.perform(get("/api/v1/user/readReview")
-                .content(principalUser)
-                .param("foodId", "14461")
-                .param("pageNum", "1"))
+                        .content(principalUser)
+                        .param("foodId", "14461")
+                        .param("pageNum", "1"))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
@@ -107,8 +107,8 @@ class ReviewControllerTest {
     void readReviewByReviewID() throws Exception {
         String principalUser = objectMapper.writeValueAsString(new PrincipalDetails(user));
         mvc.perform(get("/api/v1/user/readReviewByReviewID")
-                .content(principalUser)
-                .param("reviewId", "388"))
+                        .content(principalUser)
+                        .param("reviewId", "388"))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
@@ -118,8 +118,8 @@ class ReviewControllerTest {
     void readReviewByUserID() throws Exception {
         String principalUser = objectMapper.writeValueAsString(new PrincipalDetails(user));
         mvc.perform(get("/api/v1/user/readReviewByUserID")
-                .content(principalUser)
-                .param("reviewId", "388"))
+                        .content(principalUser)
+                        .param("reviewId", "388"))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
@@ -133,10 +133,10 @@ class ReviewControllerTest {
         String principalUser = objectMapper.writeValueAsString(new PrincipalDetails(user));
         String dto = objectMapper.writeValueAsString(map);
         mvc.perform(post("/api/v1/user/updateReviewLike")
-                .content(principalUser)
-                .content(dto)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .content(principalUser)
+                        .content(dto)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
 //                .andExpect(status().isOk())
                 .andExpect(status().isBadRequest())
                 .andDo(print());
@@ -152,10 +152,10 @@ class ReviewControllerTest {
         String principalUser = objectMapper.writeValueAsString(new PrincipalDetails(user));
         String dto = objectMapper.writeValueAsString(map);
         mvc.perform(post("/api/v1/user/updateReview")
-                .content(principalUser)
-                .content(dto)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .content(principalUser)
+                        .content(dto)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
@@ -168,10 +168,10 @@ class ReviewControllerTest {
         String principalUser = objectMapper.writeValueAsString(new PrincipalDetails(user));
         String dto = objectMapper.writeValueAsString(map);
         mvc.perform(post("/api/v1/user/deleteReview")
-                .content(principalUser)
-                .content(dto)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .content(principalUser)
+                        .content(dto)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());
     }

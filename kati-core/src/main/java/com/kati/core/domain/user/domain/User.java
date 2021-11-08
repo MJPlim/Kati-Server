@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -20,6 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Accessors(chain = true)
 @Table(name = "user")
 @Entity
 public class User {

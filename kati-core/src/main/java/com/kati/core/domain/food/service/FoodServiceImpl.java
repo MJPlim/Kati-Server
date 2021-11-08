@@ -1,6 +1,7 @@
 package com.kati.core.domain.food.service;
 
 import com.kati.core.domain.food.domain.FoodCategory;
+import com.kati.core.domain.food.exception.NotFoundFoodException;
 import com.kati.core.global.dto.Pagination;
 import com.kati.core.domain.food.domain.Food;
 import com.kati.core.domain.food.dto.FoodDetailResponse;
@@ -8,6 +9,7 @@ import com.kati.core.domain.food.dto.FoodResponse;
 import com.kati.core.domain.food.exception.FoodExceptionMessage;
 import com.kati.core.domain.food.exception.NoFoodDetailException;
 import com.kati.core.domain.food.repository.FoodRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,22 +22,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 public class FoodServiceImpl implements FoodService {
 //    private final ApiKeyRepository apiKeyRepository;
 //    private final RestTemplate restTemplate;
     private final FoodRepository foodRepository;
 
-    @Autowired
-    public FoodServiceImpl(FoodRepository foodRepository) {
-        this.foodRepository = foodRepository;
+    public Food findById(Long foodId) {
+        return this.foodRepository.findById(foodId).orElseThrow(NotFoundFoodException::new);
     }
 
     @Transactional
     @Override
     public FoodDetailResponse getFoodDetail(Long foodId) {
         Optional<Food> optionalFood = this.foodRepository.findById(foodId);
-        Food food = optionalFood.orElseThrow(() -> new NoFoodDetailException(FoodExceptionMessage.NO_FOOD_EXCEPTION_MESSAGE));
+        Food food = optionalFood.orElseThrow(() -> new NoFoodDetailException(FoodExceptionMessage.NOT_FOUND_FOOD_EXCEPTION_MESSAGE));
         food.setViewCount(food.getViewCount() + 1);
         return FoodDetailResponse.from(food);
     }

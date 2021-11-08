@@ -4,6 +4,7 @@ import com.kati.core.domain.favorite.domain.Favorite;
 import com.kati.core.domain.food.domain.Food;
 import com.kati.core.domain.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.lang.NonNull;
 
 import java.util.List;
 
