@@ -42,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http
-                .addFilterBefore(corsFilter, SecurityContextPersistenceFilter.class);
+            .cors().and();
 
 
         http
