@@ -24,6 +24,7 @@ public class CorsConfig {
         configuration.addExposedHeader("*");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
+        configuration.addAllowedOrigin("http://localhost:3000");
         source.registerCorsConfiguration("/**", configuration);
 
         return new CorsFilter(source);
