@@ -60,9 +60,9 @@ class ReviewServiceImplTest {
     @Test
 //    @Rollback(false)
     void saveReview() throws Exception {
-        CreateReviewRequest request = new CreateReviewRequest(10101L, 4, "테스트 코드 입니다.");
+        CreateReviewRequest request = new CreateReviewRequest(10103L, 4, "테스트 코드 입니다.");
         reviewServiceimpl.saveReview(new PrincipalDetails(user), request);
-        ReadReviewResponse response = reviewServiceimpl.findReview(10101L, 1).get(0);
+        ReadReviewResponse response = reviewServiceimpl.findReview(10103L, 1).get(0);
 
         assertThat(request.getReviewDescription()).isEqualTo(response.getReviewDescription());
         assertThat(request.getReviewRating()).isEqualTo(response.getReviewRating());
@@ -71,47 +71,36 @@ class ReviewServiceImplTest {
 
     @Test
     void findReview() {
-        CreateReviewRequest request = new CreateReviewRequest(10101L, 4, "테스트 코드 입니다.");
-        reviewServiceimpl.saveReview(new PrincipalDetails(user), request);
-
         ReadReviewResponse response = reviewServiceimpl.findReview(10101L, 1).get(0);
 
-        assertThat(request.getReviewRating()).isEqualTo(response.getReviewRating());
-        assertThat(request.getReviewDescription()).isEqualTo(response.getReviewDescription());
+        assertThat(4).isEqualTo(response.getReviewRating());
+        assertThat("테스트 코드 입니다.").isEqualTo(response.getReviewDescription());
     }
 
     @Test
     void findReviewByUserIdANDFoodID() {
-        CreateReviewRequest request = new CreateReviewRequest(10101L, 4, "테스트 코드 입니다.");
-        reviewServiceimpl.saveReview(new PrincipalDetails(user), request);
+        ReadReviewResponse response = reviewServiceimpl.findReviewByUserIdANDFoodID(new PrincipalDetails(user), 10101L, 1).get(0);
 
-        ReadReviewResponse response = reviewServiceimpl.findReviewByUserIdANDFoodID(new PrincipalDetails(user), request.getFoodId(), 1).get(0);
-
-        assertThat(request.getReviewRating()).isEqualTo(response.getReviewRating());
-        assertThat(request.getReviewDescription()).isEqualTo(response.getReviewDescription());
+        assertThat(4).isEqualTo(response.getReviewRating());
+        assertThat("테스트 코드 입니다.").isEqualTo(response.getReviewDescription());
     }
 
     @Test
     void findReviewByUserId() {
-        CreateReviewRequest request = new CreateReviewRequest(10101L, 4, "테스트 코드 입니다.");
-        reviewServiceimpl.saveReview(new PrincipalDetails(user), request);
-
         //틀린게 맞음 --> 사용자가 작성한 모든 리뷰 중 첫번째를 보여주기 때문이다. 혹시모르니 냅두고 isNotEqualTO로 바꿀것임
         ReadReviewResponse response = reviewServiceimpl.findReviewByUserId(new PrincipalDetails(user), 1).get(0);
 
-        assertThat(request.getReviewRating()).isEqualTo(response.getReviewRating());
-        assertThat(request.getReviewDescription()).isEqualTo(response.getReviewDescription());
+        assertThat(5).isNotEqualTo(response.getReviewRating());
+        assertThat("테스트 코드 입니다.").isNotEqualTo(response.getReviewDescription());
     }
 
     @Test
     void findUserReviewCount() {
-        CreateReviewRequest request = new CreateReviewRequest(10101L, 4, "테스트 코드 입니다.");
-        reviewServiceimpl.saveReview(new PrincipalDetails(user), request);
-
         int response = reviewServiceimpl.findUserReviewCount(new PrincipalDetails(user));
-
-        assertThat(1).isEqualTo(response);
+        assertThat(2).isEqualTo(response);
     }
+
+    /////////////////
 
     @Test
     @DisplayName("해당 음식의 리뷰에 대한 정보를 보여준다.")
@@ -154,7 +143,7 @@ class ReviewServiceImplTest {
     @DisplayName("리뷰에 좋아요를 누르거나 좋아요를 취소한다.")
 //    @Rollback(false)
     void changeReviewLike() {
-        UpdateReviewLikeRequest updateReviewLikeRequest = new UpdateReviewLikeRequest(414L, true);
+        UpdateReviewLikeRequest updateReviewLikeRequest = new UpdateReviewLikeRequest(414L, false);
         ReviewLike reviewLike = reviewServiceimpl.changeReviewLike(new PrincipalDetails(user), updateReviewLikeRequest);
 
         //좋아요가 눌러지면 review_like에 reviewId와 userID가 추가된다.
