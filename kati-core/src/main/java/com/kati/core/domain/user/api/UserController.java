@@ -1,23 +1,37 @@
 package com.kati.core.domain.user.api;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.kati.core.domain.user.domain.User;
+import com.kati.core.domain.user.domain.UserProvider;
 import com.kati.core.domain.user.dto.*;
 import com.kati.core.domain.user.exception.NoLoginException;
 import com.kati.core.domain.user.exception.UserExceptionMessage;
 import com.kati.core.domain.user.service.UserService;
 import com.kati.core.global.config.security.auth.PrincipalDetails;
+import com.kati.core.global.config.security.jwt.JwtTokenProvider;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Api(tags = {"User"})
 @RequiredArgsConstructor
@@ -25,6 +39,9 @@ import javax.validation.Valid;
 public class UserController {
 
     private final UserService userService;
+    private final RestTemplate restTemplate;
+    private final JwtTokenProvider jwtTokenProvider;
+
 
     @ApiOperation(value = "회원가입", notes = "사용자가 회원가입을 한다")
     @PostMapping("signup")
@@ -115,6 +132,44 @@ public class UserController {
     @GetMapping("api/v1/user/summary")
     public ResponseEntity<UserSummaryResponse> userSummary(@AuthenticationPrincipal PrincipalDetails principal) {
         return userService.userSummary(principal);
+    }
+
+    @PostMapping(value = "/oauth2-login")
+    public ResponseEntity<Oauth2LoginResponse> oauth2Login(@RequestBody Oauth2LoginRequest oauth2) throws ServletException, IOException {
+
+        String url = "";
+        UserProvider provider = null;
+        if(oauth2.getLoginType().equals("KAKAO")) {
+            url = "https://kapi.kakao.com/v2/user/me";
+            provider = UserProvider.KAKAO;
+        }else if(oauth2.getLoginType().equals("NAVER")){
+            url = "https://openapi.naver.com/v1/nid/me";
+            provider = UserProvider.NAVER;
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + oauth2.getAccessToken());
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity header = new HttpEntity(headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, header, String.class);
+        System.out.println(responseEntity.getBody().toString());
+
+        GsonBuilder builder = new GsonBuilder();
+        builder.setPrettyPrinting();
+        Gson gson = builder.create();
+
+        Map<String, Object> map = gson.fromJson(responseEntity.getBody().toString(), Map.class);
+        PrincipalDetails oAuth2User = (PrincipalDetails) userService.mappingUser(map, provider);
+
+        if(oAuth2User != null){
+            HttpHeaders responseHeaders = new HttpHeaders();
+            String token = jwtTokenProvider.createToken(oAuth2User.getUsername());
+            responseHeaders.set("Authorization", "Bearer " + token);
+            return ResponseEntity.ok().headers(responseHeaders).body(Oauth2LoginResponse.builder().message("로그인 성공!").build());
+        }else{
+            return ResponseEntity.badRequest().body(Oauth2LoginResponse.builder().message("로그인 실패!").build());
+        }
+        
     }
 
 }

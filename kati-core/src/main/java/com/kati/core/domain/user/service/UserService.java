@@ -4,6 +4,8 @@ import com.kati.core.domain.favorite.repository.FavoriteRepository;
 import com.kati.core.domain.post.repository.CommentRepository;
 import com.kati.core.domain.review.repository.ReviewRepository;
 import com.kati.core.domain.user.domain.User;
+import com.kati.core.domain.user.domain.UserProvider;
+import com.kati.core.domain.user.domain.UserRoleType;
 import com.kati.core.domain.user.domain.UserStateType;
 import com.kati.core.domain.user.dto.*;
 import com.kati.core.domain.user.exception.*;
@@ -16,10 +18,14 @@ import com.kati.core.global.domain.mail.util.EmailAuthCodeGenerator;
 import com.kati.core.global.domain.mail.util.EmailUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
@@ -144,5 +150,50 @@ public class UserService {
     public ResponseEntity<GetSecondEmailResponse> getSecondEmail(PrincipalDetails principalDetails) {
         User user = getUserByPrincipalDetails(principalDetails);
         return ResponseEntity.ok(GetSecondEmailResponse.builder().secondEmail(user.getSecondEmail()).build());
+    }
+
+    public OAuth2User mappingUser(Map<String, Object> userRequest, UserProvider provider){
+
+        UserProvider userProvider = checkProvider(provider.toString());
+        String email = null;
+        String nickname = null;
+        if(userProvider.equals(UserProvider.KAKAO)){
+            Map<String, Object> kakaoAccount = (Map<String, Object>) userRequest.get("kakao_account");
+            email = kakaoAccount.get("email").toString();
+            Map<String, Object> kakaoProfile = (Map<String, Object>) kakaoAccount.get("profile");
+            nickname = kakaoProfile.get("nickname").toString();
+        }else if(userProvider.equals(UserProvider.NAVER)){
+            Map<String, Object> naverPropile = (Map<String, Object>) userRequest.get("response");
+            email = (String) naverPropile.get("email");
+            nickname = (String) naverPropile.get("nickname");
+        }
+        final String finalEmail = email;
+        final String finalNickname = nickname;
+
+        User user = userRepository.findByEmailAndProviderIs(email, userProvider).orElseGet(() -> {
+            if (userRepository.existsByEmail(finalEmail)) {
+                throw new AuthenticationServiceException(UserExceptionMessage.EMAIL_DUPLICATE_EXCEPTION_MESSAGE.getMessage());
+            }
+            System.out.println("created email");
+            return userRepository.save(User.builder()
+                    .email(finalEmail)
+                    .password(passwordEncoder.encode("KATI"))  //??
+                    .name(finalNickname)
+                    .role(UserRoleType.ROLE_USER)
+                    .state(UserStateType.NORMAL)
+                    .provider(userProvider)
+                    .build());
+        });
+
+        return new PrincipalDetails(user, userRequest);
+    }
+
+    private UserProvider checkProvider(String provider) {
+        if (provider.equals("NAVER")) {
+            return UserProvider.NAVER;
+        } else if (provider.equals("KAKAO")) {
+            return UserProvider.KAKAO;
+        }
+        return UserProvider.KATI;
     }
 }
