@@ -3,6 +3,7 @@ package com.kati.core.domain.review.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kati.core.domain.annotation.EnableMockMvc;
 import com.kati.core.domain.review.dto.CreateReviewRequest;
+import com.kati.core.domain.review.dto.DeleteReviewRequest;
 import com.kati.core.domain.user.domain.User;
 import com.kati.core.domain.user.domain.UserProvider;
 import com.kati.core.domain.user.domain.UserRoleType;
@@ -163,16 +164,17 @@ class ReviewControllerTest {
     @Test
     @WithUserDetails(value = "cksgh3422@nate.com", userDetailsServiceBeanName = "principalDetailsService")
     void deleteReview() throws Exception {
-        Map<Object, String> map = new HashMap<>();
-        map.put("reviewId", "388");
+//        Map<Object, String> map = new HashMap<>();
+//        map.put("reviewId", "388");
+        DeleteReviewRequest request = new DeleteReviewRequest(388L);
         String principalUser = objectMapper.writeValueAsString(new PrincipalDetails(user));
-        String dto = objectMapper.writeValueAsString(map);
+        String dto = objectMapper.writeValueAsString(request);
         mvc.perform(post("/api/v1/user/deleteReview")
                         .content(principalUser)
                         .content(dto)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andDo(print());
     }
 
