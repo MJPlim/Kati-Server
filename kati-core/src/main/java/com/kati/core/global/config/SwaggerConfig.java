@@ -19,7 +19,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(swaggerInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.plim.plimserver.domain"))
+                .apis(RequestHandlerSelectors.basePackage("com.kati.core.domain"))
                 .paths(PathSelectors.any())
                 .build()
                 .useDefaultResponseMessages(false);
