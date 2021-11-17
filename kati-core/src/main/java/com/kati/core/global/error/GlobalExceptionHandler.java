@@ -1,5 +1,6 @@
 package com.kati.core.global.error;
 
+import org.hibernate.exception.spi.ViolatedConstraintNameExtracter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -14,7 +16,7 @@ import java.util.NoSuchElementException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<Map<String, Map<String, String>>> handleValidationExceptions(MethodArgumentNotValidException e){
         Map<String, String> errors = new HashMap<>();
         e.getBindingResult().getAllErrors()
@@ -24,8 +26,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(responseError);
     }
 
-    @ExceptionHandler({IllegalArgumentException.class, UsernameNotFoundException.class, NoSuchElementException.class})
-    public ResponseEntity<Map<String, String>> handleEmailDuplicateException(Exception e) {
+    @ExceptionHandler({IllegalArgumentException.class, UsernameNotFoundException.class, NoSuchElementException.class, ConstraintViolationException.class})
+    public ResponseEntity<Map<String, String>> handleSingleException(Exception e) {
         Map<String, String> error = new HashMap<>();
         error.put("error-message", e.getMessage());
         return ResponseEntity.badRequest().body(error);

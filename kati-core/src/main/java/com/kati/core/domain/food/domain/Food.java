@@ -80,8 +80,13 @@ public class Food {
     public void addReview(Review review) {
         this.reviewList.add(review);
     }
-    
+
     public void updateNutrient(String nutrient) {
-    	this.foodDetail.newNutrient(nutrient);
+        this.foodDetail.newNutrient(nutrient);
+    }
+
+    public Food viewCountUp() {
+        this.viewCount++;
+        return this;
     }
 }

@@ -1,84 +1,63 @@
 package com.kati.core.domain.advertisement.service;
 
 import com.kati.core.domain.advertisement.domain.AdvertisementFood;
-import com.kati.core.domain.advertisement.dto.AdvertisementResponse;
-import com.kati.core.domain.advertisement.exception.AdvertisementExceptionMessage;
-import com.kati.core.domain.advertisement.exception.NoAdvertisementFoodDetailException;
+import com.kati.core.domain.advertisement.exception.AlreadyExistsAdvertisementFoodException;
+import com.kati.core.domain.advertisement.exception.NotFoundAdvertisementFoodException;
+import com.kati.core.domain.advertisement.exception.SizeMoreThanListSizeException;
 import com.kati.core.domain.advertisement.repository.AdvertisementRepository;
 import com.kati.core.domain.food.domain.Food;
-import com.kati.core.domain.food.dto.FoodDetailResponse;
-import com.kati.core.domain.food.dto.FoodResponse;
-import com.kati.core.domain.food.repository.FoodRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.kati.core.domain.food.service.FoodService;
+import com.kati.core.domain.user.service.UserService;
+import com.kati.core.global.config.security.auth.PrincipalDetails;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+@RequiredArgsConstructor
 @Service
-public class AdvertisementServiceImpl implements AdvertisementService{
+public class AdvertisementServiceImpl implements AdvertisementService {
+    
     private final AdvertisementRepository advertisementRepository;
-    private final FoodRepository foodRepository;
+    private final FoodService foodService;
+    private final UserService userService;
 
-    @Autowired
-    public AdvertisementServiceImpl(AdvertisementRepository advertisementRepository, FoodRepository foodRepository) {
-        this.advertisementRepository = advertisementRepository;
-        this.foodRepository = foodRepository;
+    @Transactional
+    @Override
+    public Set<AdvertisementFood> getRandomAdvertisementFoods(int size) {
+        List<AdvertisementFood> advertisementFoods = this.advertisementRepository.findAll();
+        HashSet<AdvertisementFood> randomAdvertisementFoods = new HashSet<>();
+        this.getRandomIndices(size, advertisementFoods).forEach(i ->
+                randomAdvertisementFoods.add(advertisementFoods.get(i).impressionUp()));
+        return randomAdvertisementFoods;
     }
 
-    @Override
-    @Transactional
-    public ArrayList<AdvertisementResponse> getAdvertisementFoodList() {
-        ArrayList<AdvertisementResponse> ads = new ArrayList<>();
-        List<AdvertisementFood> onAds = this.advertisementRepository.findAllByAdState("on");
-        Random r = new Random();
-        Set<Integer> numSet = new HashSet<>();
-        while (numSet.size() != 3) {
-            int id = r.nextInt(onAds.size());
-            numSet.add(id);
-        }
-        for (int i : numSet) {
-            AdvertisementFood advertisementFood = onAds.get(i);
-            AdvertisementResponse response = AdvertisementResponse.builder()
-                                                                  .id(advertisementFood.getId())
-                                                                  .food(FoodResponse.from(advertisementFood.getFood()))
-                                                                  .build();
-            ads.add(response);
-            advertisementFood.setImpressionCount(advertisementFood.getImpressionCount()+1);
-        }
-        return ads;
+    private Set<Integer> getRandomIndices(int size, List<?> list) {
+        if (size > list.size()) throw new SizeMoreThanListSizeException();
+        Random random = new Random();
+        Set<Integer> randomIndices = new HashSet<>();
+        while (randomIndices.size() < size) randomIndices.add(random.nextInt(list.size()));
+        return randomIndices;
     }
 
     @Transactional
     @Override
-    public FoodDetailResponse getFoodDetailForAdvertisement(Long adId) {
-        Optional<AdvertisementFood> optionalAdvertisement = this.advertisementRepository.findById(adId);
-        AdvertisementFood advertisementFood = optionalAdvertisement.orElseThrow(
-                () -> new NoAdvertisementFoodDetailException(AdvertisementExceptionMessage.NO_ADVERTISEMENT_FOOD_DETAIL_EXCEPTION_MESSAGE));
-        advertisementFood.setViewCount(advertisementFood.getViewCount()+1);
-        advertisementFood.getFood().setViewCount(advertisementFood.getFood().getViewCount()+1);
-        return FoodDetailResponse.from(advertisementFood.getFood());
+    public AdvertisementFood findById(Long id) {
+        return this.advertisementRepository.findById(id)
+                .orElseThrow(NotFoundAdvertisementFoodException::new)
+                .impressionUp();
     }
 
     @Override
-    public boolean selectAdvertisement(Long id1, Long id2, Long id3) throws NoSuchElementException{
-        this.setAdvertisementFood(id1);
-        if (id2 != null) {
-            this.setAdvertisementFood(id2);
-        }
-        if (id3 != null) {
-            this.setAdvertisementFood(id3);
-        }
-
-        return true;
+    public AdvertisementFood saveByFoodId(PrincipalDetails principalDetails, Long foodId) {
+        Food food = this.foodService.findById(foodId);
+        this.validateAlreadyExistsAdvertisementFood(food);
+        return this.advertisementRepository.save(new AdvertisementFood(food));
     }
 
-    private void setAdvertisementFood(Long id) throws NoSuchElementException {
-        Optional<Food> optFood = this.foodRepository.findById(id);
-        Food food = optFood.orElseThrow(NoSuchElementException::new);
-        Optional<AdvertisementFood> optionalFindFood = this.advertisementRepository.findByFood(food);
-        if (!optionalFindFood.isPresent()) {
-            this.advertisementRepository.save(AdvertisementFood.builder().food(food).adState("on").build());
-        }
+    private void validateAlreadyExistsAdvertisementFood(Food food) {
+        if (this.advertisementRepository.existsByFood(food))
+            throw new AlreadyExistsAdvertisementFoodException();
     }
 }

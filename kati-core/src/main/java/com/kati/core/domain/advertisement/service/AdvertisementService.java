@@ -1,15 +1,14 @@
 package com.kati.core.domain.advertisement.service;
 
-import com.kati.core.domain.advertisement.dto.AdvertisementResponse;
-import com.kati.core.domain.food.dto.FoodDetailResponse;
+import com.kati.core.domain.advertisement.domain.AdvertisementFood;
+import com.kati.core.global.config.security.auth.PrincipalDetails;
 
-import java.util.ArrayList;
-import java.util.NoSuchElementException;
+import java.util.Set;
 
 public interface AdvertisementService {
-    ArrayList<AdvertisementResponse> getAdvertisementFoodList();
+    Set<AdvertisementFood> getRandomAdvertisementFoods(int size);
 
-    boolean selectAdvertisement(Long id1, Long id2, Long id3) throws NoSuchElementException;
+    AdvertisementFood saveByFoodId(PrincipalDetails principalDetails, Long foodId);
 
-    FoodDetailResponse getFoodDetailForAdvertisement(Long adId);
+    AdvertisementFood findById(Long adId);
 }

@@ -111,7 +111,7 @@ public class UserService {
 
     @Transactional
     public User modifyPassword(PrincipalDetails principal, ModifyPasswordRequest dto) {
-        User user = getUserByPrincipalDetails(principal);
+        User user = this.getUserByPrincipalDetails(principal);
         //입력한 비밀번호가 기존 비밀번호와 다를때
         boolean matches1 = passwordEncoder.matches(dto.getBeforePassword(), user.getPassword());
         if (!matches1)
@@ -152,17 +152,17 @@ public class UserService {
         return ResponseEntity.ok(GetSecondEmailResponse.builder().secondEmail(user.getSecondEmail()).build());
     }
 
-    public OAuth2User mappingUser(Map<String, Object> userRequest, UserProvider provider){
+    public OAuth2User mappingUser(Map<String, Object> userRequest, UserProvider provider) {
 
         UserProvider userProvider = checkProvider(provider.toString());
         String email = null;
         String nickname = null;
-        if(userProvider.equals(UserProvider.KAKAO)){
+        if (userProvider.equals(UserProvider.KAKAO)) {
             Map<String, Object> kakaoAccount = (Map<String, Object>) userRequest.get("kakao_account");
             email = kakaoAccount.get("email").toString();
             Map<String, Object> kakaoProfile = (Map<String, Object>) kakaoAccount.get("profile");
             nickname = kakaoProfile.get("nickname").toString();
-        }else if(userProvider.equals(UserProvider.NAVER)){
+        } else if (userProvider.equals(UserProvider.NAVER)) {
             Map<String, Object> naverPropile = (Map<String, Object>) userRequest.get("response");
             email = (String) naverPropile.get("email");
             nickname = (String) naverPropile.get("nickname");

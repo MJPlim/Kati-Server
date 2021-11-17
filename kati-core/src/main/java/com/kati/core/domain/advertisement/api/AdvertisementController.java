@@ -3,41 +3,49 @@ package com.kati.core.domain.advertisement.api;
 import com.kati.core.domain.advertisement.dto.AdvertisementResponse;
 import com.kati.core.domain.advertisement.service.AdvertisementService;
 import com.kati.core.domain.food.dto.FoodDetailResponse;
+import com.kati.core.global.config.security.auth.PrincipalDetails;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.NoSuchElementException;
+import javax.validation.constraints.Min;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Api(tags = {"Advertisement"})
-@RestController
+@Validated
 @RequiredArgsConstructor
-@RequestMapping("api/v1/advertisement")
+@RestController
+@RequestMapping("/api/v1/advertisement")
 public class AdvertisementController {
+
     private final AdvertisementService advertisementService;
 
-    @ApiOperation(value = "광고제품 목록 랜덤 반환", notes = "광고상태가 on인 제품 중 3개를 랜덤하게 반환한다")
-    @GetMapping("/ads")
-    public ArrayList<AdvertisementResponse> getAdvertisementFoodList() {
-        return this.advertisementService.getAdvertisementFoodList();
+    @ApiOperation(value = "size 만큼의 랜덤한 광고제품들을 반환한다.")
+    @GetMapping("/search")
+    public ResponseEntity<List<AdvertisementResponse>> getThreeRandomItems(@RequestParam @Min(1) int size) {
+        return ResponseEntity.ok(this.advertisementService.getRandomAdvertisementFoods(size).stream()
+                .map(AdvertisementResponse::from)
+                .collect(Collectors.toList()));
     }
 
-    @ApiOperation(value = "광고용 특정 제품의 상세정보 조회", notes = "선택한 광고 제품을 조회하여 상세정보를 반환한다")
-    @GetMapping("/foodDetail")
-    public FoodDetailResponse getFoodDetailForAdvertisement(@RequestParam(name = "adId") Long adId) {
-        return this.advertisementService.getFoodDetailForAdvertisement(adId);
+    @ApiOperation(value = "광고제품에 대한 상세 내용을 반환한다.")
+    @GetMapping("/{id}")
+    public ResponseEntity<AdvertisementResponse> getFoodDetailForAdvertisement(@PathVariable Long id) {
+        return ResponseEntity.ok(AdvertisementResponse.from(this.advertisementService.findById(id)));
     }
 
-    @ApiOperation(value = "광고제품을 db에 생성", notes = "ad_food 테이블에 광고할 제품을 넣는다")
-    @PostMapping("/onItem")
-    public boolean chooseAdvertisement(@RequestParam(name = "firstID") Long id1
-            , @RequestParam(name = "secondID", required = false) Long id2, @RequestParam(name = "thirdID", required = false) Long id3) {
-        try {
-            return this.advertisementService.selectAdvertisement(id1, id2, id3);
-        } catch (NoSuchElementException e) {
-            return false;
-        }
+    @ApiOperation(value = "해당 제품을 광고로 등록한다.", notes = "ad_food 테이블에 광고할 제품을 넣는다")
+    @PostMapping
+    public ResponseEntity<String> saveByFoodId(@AuthenticationPrincipal PrincipalDetails principalDetails, @RequestParam Long foodId) {
+        this.advertisementService.saveByFoodId(principalDetails, foodId);
+        return ResponseEntity.ok("해당 제품을 광고로 등록 완료했습니다.");
     }
+
 }

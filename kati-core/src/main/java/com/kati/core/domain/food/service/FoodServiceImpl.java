@@ -25,10 +25,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class FoodServiceImpl implements FoodService {
+
 //    private final ApiKeyRepository apiKeyRepository;
 //    private final RestTemplate restTemplate;
     private final FoodRepository foodRepository;
 
+    @Override
     public Food findById(Long foodId) {
         return this.foodRepository.findById(foodId).orElseThrow(NotFoundFoodException::new);
     }
@@ -36,22 +38,20 @@ public class FoodServiceImpl implements FoodService {
     @Transactional
     @Override
     public FoodDetailResponse getFoodDetail(Long foodId) {
-        Optional<Food> optionalFood = this.foodRepository.findById(foodId);
-        Food food = optionalFood.orElseThrow(() -> new NoFoodDetailException(FoodExceptionMessage.NOT_FOUND_FOOD_EXCEPTION_MESSAGE));
-        food.setViewCount(food.getViewCount() + 1);
-        return FoodDetailResponse.from(food);
+        return FoodDetailResponse.from(this.findById(foodId).viewCountUp());
     }
 
     @Override
     public FoodDetailResponse findFoodByBarcode(String barcode) {
-        return FoodDetailResponse.from(this.foodRepository.findByBarcodeNumber(barcode)
-                .orElseThrow(() -> new NoFoodDetailException(FoodExceptionMessage.NO_FOOD_DETAIL_EXCEPTION_MESSAGE)));
+        return FoodDetailResponse.from(this.foodRepository.findByBarcodeNumber(barcode).orElseThrow(NotFoundFoodException::new));
     }
 
     @Override
-    public Pagination<List<FoodResponse>> searchFood(int pageNo, int size, String sortElement, String order, String category,
-                                                     String foodName, String manufacturerName, List<String> allergyList) {
-        Pageable pageable = PageRequest.of(pageNo-1, size);
+    public Pagination<List<FoodResponse>> searchFood(
+            int pageNo, int size, String sortElement, String order, String category,
+            String foodName, String manufacturerName, List<String> allergyList
+    ) {
+        Pageable pageable = PageRequest.of(pageNo - 1, size);
         Page<Food> page = this.foodRepository.search(sortElement, category, foodName, manufacturerName, allergyList, order, pageable);
         List<FoodResponse> data = page.stream().map(FoodResponse::from).collect(Collectors.toList());
         return Pagination.of(page, data);

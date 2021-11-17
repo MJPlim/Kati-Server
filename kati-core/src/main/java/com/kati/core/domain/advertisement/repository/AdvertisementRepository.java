@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AdvertisementRepository extends JpaRepository<AdvertisementFood, Long> {
-    List<AdvertisementFood> findAllByAdState(String state);
 
-    Optional<AdvertisementFood> findByFood(Food food);
+    boolean existsByFood(Food food);
+
 }

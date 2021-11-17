@@ -35,10 +35,10 @@ public class FoodDetailResponse {
                 .nutrient(food.getFoodDetail().getNutrient())
                 .allergyMaterials(food.getAllergyMaterials())
                 .viewCount(food.getViewCount())
-                .reviewCount((int)food.getReviewList().stream().filter(f -> f.getState().equals(ReviewStateType.NORMAL)).count())
+                .reviewCount((int) food.getReviewList().stream().filter(f -> f.getState().equals(ReviewStateType.NORMAL)).count())
                 .reviewRate(String.format("%.2f",
                         food.getReviewList().stream().filter(f -> f.getState().equals(ReviewStateType.NORMAL))
-                            .mapToInt(Review::getReviewRating).average().orElse(0)))
+                                .mapToInt(Review::getReviewRating).average().orElse(0)))
                 .build();
     }
 

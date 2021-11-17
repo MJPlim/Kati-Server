@@ -2,50 +2,39 @@ package com.kati.core.domain.advertisement.domain;
 
 import com.kati.core.domain.food.domain.Food;
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.Objects;
 
-@Table(name = "ad_food")
 @Getter
 @Setter
+@EqualsAndHashCode(exclude = {"food"})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "ad_food")
 @Entity
 public class AdvertisementFood {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ad_id")
     private Long id;
 
-    @OneToOne()
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "food_id")
     private Food food;
 
-    @Column(name = "view_count")
-    private Long viewCount;
-
     @Column(name = "impression_count")
-    private Long impressionCount;
+    private Long impression = 0L;
 
-    @Column(name = "priority")
-    private Integer priority;
-
-    @Column(name = "ad_state")
-    private String adState;
-
-    @Builder
-    public AdvertisementFood(Long id, Food food, Long viewCount, Long impressionCount, int priority, String adState) {
-        this.id = id;
+    public AdvertisementFood(Food food) {
         this.food = food;
-        this.viewCount = viewCount;
-        this.impressionCount = impressionCount;
-        this.priority = priority;
-        this.adState = adState;
     }
 
-    @PrePersist
-    public void prePersist() {
-        this.viewCount = this.viewCount == null ? 0 : this.viewCount;
-        this.impressionCount = this.impressionCount == null ? 0 : this.impressionCount;
-        this.priority = this.priority == null ? 0 : this.priority;
+    public AdvertisementFood impressionUp() {
+        this.impression++;
+        this.food.viewCountUp();
+        return this;
     }
+
 }
