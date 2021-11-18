@@ -45,7 +45,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     public AdvertisementFood findById(Long id) {
         return this.advertisementRepository.findById(id)
                 .orElseThrow(NotFoundAdvertisementFoodException::new)
-                .impressionUp();
+                .viewCountUp();
     }
 
     @Override

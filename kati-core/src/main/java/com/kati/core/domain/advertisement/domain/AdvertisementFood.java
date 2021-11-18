@@ -33,6 +33,10 @@ public class AdvertisementFood {
 
     public AdvertisementFood impressionUp() {
         this.impression++;
+        return this;
+    }
+
+    public AdvertisementFood viewCountUp() {
         this.food.viewCountUp();
         return this;
     }
