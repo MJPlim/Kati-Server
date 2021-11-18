@@ -29,7 +29,7 @@ public class AdvertisementController {
 
     @ApiOperation(value = "size 만큼의 랜덤한 광고제품들을 반환한다.")
     @GetMapping("/search")
-    public ResponseEntity<List<AdvertisementResponse>> getThreeRandomItems(@RequestParam @Min(1) int size) {
+    public ResponseEntity<List<AdvertisementResponse>> getRandomItems(@RequestParam @Min(1) int size) {
         return ResponseEntity.ok(this.advertisementService.getRandomAdvertisementFoods(size).stream()
                 .map(AdvertisementResponse::from)
                 .collect(Collectors.toList()));
@@ -37,7 +37,7 @@ public class AdvertisementController {
 
     @ApiOperation(value = "광고제품에 대한 상세 내용을 반환한다.")
     @GetMapping("/{id}")
-    public ResponseEntity<AdvertisementResponse> getFoodDetailForAdvertisement(@PathVariable Long id) {
+    public ResponseEntity<AdvertisementResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(AdvertisementResponse.from(this.advertisementService.findById(id)));
     }
 

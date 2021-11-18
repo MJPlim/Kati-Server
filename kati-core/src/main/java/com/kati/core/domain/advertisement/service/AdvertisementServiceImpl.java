@@ -21,7 +21,6 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     
     private final AdvertisementRepository advertisementRepository;
     private final FoodService foodService;
-    private final UserService userService;
 
     @Transactional
     @Override
@@ -60,4 +59,5 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         if (this.advertisementRepository.existsByFood(food))
             throw new AlreadyExistsAdvertisementFoodException();
     }
+
 }

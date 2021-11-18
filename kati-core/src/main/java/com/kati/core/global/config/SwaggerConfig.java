@@ -31,4 +31,5 @@ public class SwaggerConfig {
                 .description("앱/웹 개발시 사용되는 PLIM 서버 API에 대한 연동 문서입니다")
                 .build();
     }
+
 }
