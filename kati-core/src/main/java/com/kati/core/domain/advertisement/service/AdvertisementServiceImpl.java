@@ -7,13 +7,14 @@ import com.kati.core.domain.advertisement.exception.SizeMoreThanListSizeExceptio
 import com.kati.core.domain.advertisement.repository.AdvertisementRepository;
 import com.kati.core.domain.food.domain.Food;
 import com.kati.core.domain.food.service.FoodService;
-import com.kati.core.domain.user.service.UserService;
-import com.kati.core.global.config.security.auth.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
@@ -49,7 +50,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     }
 
     @Override
-    public AdvertisementFood saveByFoodId(PrincipalDetails principalDetails, Long foodId) {
+    public AdvertisementFood saveByFoodId(Long foodId) {
         Food food = this.foodService.findById(foodId);
         this.validateAlreadyExistsAdvertisementFood(food);
         return this.advertisementRepository.save(new AdvertisementFood(food));
