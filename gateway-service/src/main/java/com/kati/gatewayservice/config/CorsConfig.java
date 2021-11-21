@@ -14,6 +14,8 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+import java.util.Collections;
+
 @Configuration
 public class CorsConfig implements WebFluxConfigurer {
 
@@ -56,6 +58,7 @@ public class CorsConfig implements WebFluxConfigurer {
                 headers.add("Access-Control-Allow-Methods", "*");
                 headers.add("Access-Control-Max-Age", MAX_AGE);
                 headers.add("Access-Control-Allow-Headers", "*");
+                headers.setAccessControlExposeHeaders(Collections.singletonList("*"));
                 if (request.getMethod() == HttpMethod.OPTIONS) {
                     response.setStatusCode(HttpStatus.OK);
                     return Mono.empty();
