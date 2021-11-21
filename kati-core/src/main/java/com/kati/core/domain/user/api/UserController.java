@@ -125,7 +125,6 @@ public class UserController {
         return userService.userSummary(principal);
     }
 
-    @CrossOrigin(origins = {"http://3.38.97.234:8000/core-service/", "http://localhost:3000/"})
     @PostMapping(value = "/oauth2-login")
     public ResponseEntity<Oauth2LoginResponse> oauth2Login(@RequestBody Oauth2LoginRequest oauth2) throws ServletException, IOException {
 
