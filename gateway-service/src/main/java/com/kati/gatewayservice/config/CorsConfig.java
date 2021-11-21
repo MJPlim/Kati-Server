@@ -1,9 +1,9 @@
 package com.kati.gatewayservice.config;
 
+import com.google.common.collect.ImmutableList;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -14,7 +14,7 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-import java.util.Collections;
+import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 public class CorsConfig implements WebFluxConfigurer {
@@ -43,7 +43,6 @@ public class CorsConfig implements WebFluxConfigurer {
 //    }
 
     private static final String ALLOWED_HEADERS = "x-requested-with, authorization, Content-Type, Content-Length, Authorization, credential, X-XSRF-TOKEN";
-    private static final String ALLOWED_METHODS = "GET, PUT, POST, DELETE, OPTIONS, PATCH";
     private static final String ALLOWED_ORIGIN = "*";
     private static final String MAX_AGE = "7200"; //2 hours (2 * 60 * 60)
 
@@ -55,13 +54,14 @@ public class CorsConfig implements WebFluxConfigurer {
                 ServerHttpResponse response = ctx.getResponse();
                 HttpHeaders headers = response.getHeaders();
 //                headers.add("Access-Control-Allow-Origin", "*");
-                headers.add("Access-Control-Allow-Methods", "*");
-                headers.add("Access-Control-Max-Age", MAX_AGE);
-                headers.add("Access-Control-Allow-Headers", "*");
-                headers.setAccessControlExposeHeaders(Collections.singletonList("*"));
                 headers.setAccessControlAllowOrigin("*");
+//                headers.add("Access-Control-Allow-Methods", "*")
+                headers.setAccessControlAllowMethods(ImmutableList.of(POST, DELETE, TRACE, HEAD, GET, OPTIONS, PATCH, PUT));
+//                headers.add("Access-Control-Allow-Headers", "*");
+                headers.setAccessControlExposeHeaders(ImmutableList.of("*"));
+                headers.add("Access-Control-Max-Age", MAX_AGE);
                 headers.setAccessControlAllowCredentials(true);
-                if (request.getMethod() == HttpMethod.OPTIONS) {
+                if (request.getMethod() == OPTIONS) {
                     response.setStatusCode(HttpStatus.OK);
                     return Mono.empty();
                 }
