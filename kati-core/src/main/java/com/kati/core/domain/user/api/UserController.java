@@ -125,7 +125,7 @@ public class UserController {
         return userService.userSummary(principal);
     }
 
-    @PostMapping(value = "/oauth2-login")
+    @PostMapping(value = "oauth2-login")
     public ResponseEntity<Oauth2LoginResponse> oauth2Login(@RequestBody Oauth2LoginRequest oauth2) throws ServletException, IOException {
 
         String url = "";
