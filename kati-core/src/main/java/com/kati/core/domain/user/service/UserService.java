@@ -152,6 +152,7 @@ public class UserService {
         return ResponseEntity.ok(GetSecondEmailResponse.builder().secondEmail(user.getSecondEmail()).build());
     }
 
+    @Transactional
     public OAuth2User mappingUser(Map<String, Object> userRequest, UserProvider provider) {
 
         UserProvider userProvider = checkProvider(provider.toString());
