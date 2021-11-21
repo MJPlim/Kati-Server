@@ -59,6 +59,7 @@ public class CorsConfig implements WebFluxConfigurer {
                 headers.add("Access-Control-Max-Age", MAX_AGE);
                 headers.add("Access-Control-Allow-Headers", "*");
                 headers.setAccessControlExposeHeaders(Collections.singletonList("*"));
+                headers.setAccessControlAllowCredentials(true);
                 if (request.getMethod() == HttpMethod.OPTIONS) {
                     response.setStatusCode(HttpStatus.OK);
                     return Mono.empty();
