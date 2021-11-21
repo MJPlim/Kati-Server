@@ -33,7 +33,6 @@ import java.util.Map;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-//    private final CorsFilter corsFilter;
     private final JwtTokenProvider jwtTokenProvider;
     private final PrincipalOauth2DetailsService principalOauth2DetailsService;
 
@@ -45,7 +44,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-//                .addFilterBefore(this.corsFilter, SecurityContextPersistenceFilter.class)
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtTokenProvider))
                 .exceptionHandling()
