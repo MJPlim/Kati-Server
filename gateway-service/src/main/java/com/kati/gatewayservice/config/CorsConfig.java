@@ -54,11 +54,12 @@ public class CorsConfig implements WebFluxConfigurer {
             if (CorsUtils.isCorsRequest(request)) {
                 ServerHttpResponse response = ctx.getResponse();
                 HttpHeaders headers = response.getHeaders();
-                headers.add("Access-Control-Allow-Origin", "*");
+//                headers.add("Access-Control-Allow-Origin", "*");
                 headers.add("Access-Control-Allow-Methods", "*");
                 headers.add("Access-Control-Max-Age", MAX_AGE);
                 headers.add("Access-Control-Allow-Headers", "*");
                 headers.setAccessControlExposeHeaders(Collections.singletonList("*"));
+                headers.setAccessControlAllowOrigin("*");
                 headers.setAccessControlAllowCredentials(true);
                 if (request.getMethod() == HttpMethod.OPTIONS) {
                     response.setStatusCode(HttpStatus.OK);
