@@ -1,7 +1,6 @@
 package com.kati.core.global.config.security;
 
 import com.google.gson.Gson;
-import com.kati.core.domain.user.domain.UserRoleType;
 import com.kati.core.global.config.security.auth.PrincipalDetails;
 import com.kati.core.global.config.security.auth.PrincipalOauth2DetailsService;
 import com.kati.core.global.config.security.exception.CustomAuthenticationEntryPoint;
@@ -9,7 +8,6 @@ import com.kati.core.global.config.security.jwt.JwtAuthenticationFilter;
 import com.kati.core.global.config.security.jwt.JwtAuthorizationFilter;
 import com.kati.core.global.config.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -21,11 +19,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.context.SecurityContextPersistenceFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -40,7 +33,6 @@ import java.util.Map;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final CorsFilter corsFilter;
     private final JwtTokenProvider jwtTokenProvider;
     private final PrincipalOauth2DetailsService principalOauth2DetailsService;
 
@@ -52,7 +44,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilterBefore(this.corsFilter, SecurityContextPersistenceFilter.class)
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtTokenProvider))
                 .exceptionHandling()
