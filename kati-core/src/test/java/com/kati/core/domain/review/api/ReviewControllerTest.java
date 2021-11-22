@@ -174,7 +174,7 @@ class ReviewControllerTest {
                         .content(dto)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 

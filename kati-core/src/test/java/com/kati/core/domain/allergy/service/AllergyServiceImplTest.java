@@ -40,6 +40,7 @@ public class AllergyServiceImplTest {
     @Test
     @DisplayName("알러지 저장")
     void saveUserAllergy(){
+        //만약 기존의 정보와 일치하는 경우 기존의 기록을 지워버리고 다시 입력하는 구조이다.
         allergyService.saveUserAllergy(principalDetails, allergyList);
 
         List<String> userAllergy = allergyService.findUserAllergy(principalDetails);
