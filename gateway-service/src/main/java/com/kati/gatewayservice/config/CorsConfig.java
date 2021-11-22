@@ -3,12 +3,9 @@ package com.kati.gatewayservice.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-
-import java.util.Objects;
 
 @Configuration
 public class CorsConfig {
@@ -70,6 +67,7 @@ public class CorsConfig {
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.addAllowedOrigin("*");
+        corsConfiguration.addAllowedOrigin("http://localhost:3000");
         corsConfiguration.setMaxAge(7200L);
         corsConfiguration.addAllowedMethod(HttpMethod.GET);
         corsConfiguration.addAllowedMethod(HttpMethod.POST);
@@ -80,11 +78,7 @@ public class CorsConfig {
         corsConfiguration.addExposedHeader("*");
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
-        return new CorsWebFilter(urlBasedCorsConfigurationSource, (corsConfiguration1, serverWebExchange) -> {
-            if (Objects.equals(serverWebExchange.getRequest().getMethod(), HttpMethod.OPTIONS))
-                serverWebExchange.getResponse().setStatusCode(HttpStatus.OK);
-            return true;
-        });
+        return new CorsWebFilter(urlBasedCorsConfigurationSource);
     }
 
 }
