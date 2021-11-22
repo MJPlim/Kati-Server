@@ -37,7 +37,9 @@ public class UserController {
     @ApiOperation(value = "회원가입", notes = "사용자가 회원가입을 한다")
     @PostMapping("signup")
     public ResponseEntity<SignUpUserResponse> signup(@Valid @RequestBody SignUpUserRequest dto) {
+        System.out.println("controller: 1");
         User saved = userService.saveUser(dto);
+        System.out.println("controller: 2");
         return ResponseEntity.ok(SignUpUserResponse.builder()
                 .email(saved.getEmail())
                 .message("해당 메일 주소로 이메일 인증 메일을 발송했습니다. 메일 인증을 하시면 회원가입이 완료됩니다.")
@@ -143,13 +145,13 @@ public class UserController {
         HttpEntity header = new HttpEntity(headers);
 
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, header, String.class);
-        System.out.println(responseEntity.getBody().toString());
+        System.out.println(responseEntity.getBody());
 
         GsonBuilder builder = new GsonBuilder();
         builder.setPrettyPrinting();
         Gson gson = builder.create();
 
-        Map<String, Object> map = gson.fromJson(responseEntity.getBody().toString(), Map.class);
+        Map<String, Object> map = gson.fromJson(responseEntity.getBody(), Map.class);
         PrincipalDetails oAuth2User = (PrincipalDetails) userService.mappingUser(map, provider);
 
         if(oAuth2User != null){
