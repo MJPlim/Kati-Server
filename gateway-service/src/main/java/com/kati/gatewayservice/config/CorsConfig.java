@@ -1,42 +1,37 @@
 package com.kati.gatewayservice.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.CorsWebFilter;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.reactive.config.CorsRegistry;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
-
-import java.util.Collections;
 
 @Configuration
 public class CorsConfig implements WebFluxConfigurer {
 
-//    @Override
-//    public void addCorsMappings(CorsRegistry registry) {
-//        registry.addMapping("/**")
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
 //                .allowCredentials(true)
-//                .allowedOrigins("*")
-//                .allowedHeaders("*")
-//                .allowedMethods("*")
-//                .exposedHeaders(HttpHeaders.SET_COOKIE);
-//    }
-//
-    @Bean
-    public CorsWebFilter corsWebFilter() {
-        System.out.println("cors filter 1");
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowCredentials(false);
-        corsConfiguration.addAllowedHeader(CorsConfiguration.ALL);
-        corsConfiguration.addAllowedMethod(CorsConfiguration.ALL);
-//        corsConfiguration.setAllowedOrigins(Collections.singletonList("*"));
-        corsConfiguration.setAllowedOriginPatterns(Collections.singletonList("*"));
-        corsConfiguration.addExposedHeader(CorsConfiguration.ALL);
-        UrlBasedCorsConfigurationSource corsConfigurationSource = new UrlBasedCorsConfigurationSource();
-        corsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
-        System.out.println("cors filter end");
-        return new CorsWebFilter(corsConfigurationSource);
+                .allowedOrigins(CorsConfiguration.ALL)
+                .allowedHeaders(CorsConfiguration.ALL)
+                .allowedMethods(CorsConfiguration.ALL)
+                .exposedHeaders(CorsConfiguration.ALL);
     }
+//
+//    @Order(0)
+//    @Bean
+//    public CorsWebFilter corsWebFilter() {
+//        CorsConfiguration corsConfiguration = new CorsConfiguration();
+//        corsConfiguration.setAllowCredentials(false);
+//        corsConfiguration.addAllowedHeader(CorsConfiguration.ALL);
+//        corsConfiguration.addAllowedMethod(CorsConfiguration.ALL);
+////        corsConfiguration.setAllowedOrigins(Collections.singletonList("*"));
+//        corsConfiguration.setAllowedOriginPatterns(Collections.singletonList("*"));
+//        corsConfiguration.addExposedHeader(CorsConfiguration.ALL);
+//        UrlBasedCorsConfigurationSource corsConfigurationSource = new UrlBasedCorsConfigurationSource();
+//        corsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+//        return new CorsWebFilter(corsConfigurationSource);
+//    }
 //
 //    private static final String ALLOWED_HEADERS = "x-requested-with, authorization, Content-Type, Content-Length, Authorization, credential, X-XSRF-TOKEN";
 //    private static final String ALLOWED_ORIGIN = "*";
