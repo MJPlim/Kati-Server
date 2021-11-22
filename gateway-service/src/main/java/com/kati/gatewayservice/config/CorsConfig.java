@@ -24,6 +24,7 @@ public class CorsConfig implements WebFluxConfigurer {
 //
     @Bean
     public CorsWebFilter corsWebFilter() {
+        System.out.println("cors filter 1");
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(false);
         corsConfiguration.addAllowedHeader(CorsConfiguration.ALL);
@@ -33,6 +34,7 @@ public class CorsConfig implements WebFluxConfigurer {
         corsConfiguration.addExposedHeader(CorsConfiguration.ALL);
         UrlBasedCorsConfigurationSource corsConfigurationSource = new UrlBasedCorsConfigurationSource();
         corsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+        System.out.println("cors filter end");
         return new CorsWebFilter(corsConfigurationSource);
     }
 //
