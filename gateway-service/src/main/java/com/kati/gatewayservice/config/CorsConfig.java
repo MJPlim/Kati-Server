@@ -76,6 +76,7 @@ public class CorsConfig {
         corsConfiguration.addAllowedMethod(HttpMethod.OPTIONS);
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.addExposedHeader("*");
+        corsConfiguration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
         return new CorsWebFilter(urlBasedCorsConfigurationSource);
