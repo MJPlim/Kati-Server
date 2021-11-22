@@ -1,6 +1,7 @@
 package com.kati.gatewayservice.config;
 
 
+import com.google.common.collect.ImmutableList;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -8,12 +9,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
-import reactor.core.publisher.Mono;
 
-import java.util.Objects;
+import java.util.Collections;
 
 @Configuration
 public class CorsConfig {
@@ -55,14 +56,15 @@ public class CorsConfig {
             ServerHttpRequest request = ctx.getRequest();
             ServerHttpResponse response = ctx.getResponse();
             HttpHeaders headers = response.getHeaders();
-            headers.setAccessControlAllowCredentials(true);
-            headers.add("Access-Control-Allow-Origin", "http://localhost:3000");
-            headers.add("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
-            headers.add("Access-Control-Max-Age", "7200");
-            headers.add("Access-Control-Allow-Headers", "*");
-            if (Objects.equals(request.getMethod(), HttpMethod.OPTIONS)) {
+//            headers.setAccessControlAllowCredentials(true);
+            headers.setAccessControlAllowOrigin(CorsConfiguration.ALL);
+            headers.setAccessControlAllowMethods(ImmutableList.of(HttpMethod.GET, HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE, HttpMethod.HEAD, HttpMethod.OPTIONS));
+            headers.setAccessControlMaxAge(7200);
+            headers.setAccessControlAllowHeaders(Collections.singletonList(CorsConfiguration.ALL));
+            headers.setAccessControlExposeHeaders(Collections.singletonList(CorsConfiguration.ALL));
+            if (request.getMethod().equals(HttpMethod.OPTIONS)) {
                 response.setStatusCode(HttpStatus.OK);
-                return Mono.empty();
+//                return Mono.empty();
             }
             return chain.filter(ctx);
         };
