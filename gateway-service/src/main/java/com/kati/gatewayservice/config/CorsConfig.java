@@ -54,7 +54,7 @@ public class CorsConfig {
             if (CorsUtils.isCorsRequest(request)) {
                 ServerHttpResponse response = ctx.getResponse();
                 HttpHeaders headers = response.getHeaders();
-//                headers.setAccessControlAllowCredentials(true);
+                headers.setAccessControlAllowCredentials(true);
                 headers.add("Access-Control-Allow-Origin", "http://localhost:3000");
                 headers.add("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
                 headers.add("Access-Control-Max-Age", "7200");
