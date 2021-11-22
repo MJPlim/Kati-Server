@@ -8,7 +8,6 @@ import com.kati.core.global.config.security.jwt.JwtAuthenticationFilter;
 import com.kati.core.global.config.security.jwt.JwtAuthorizationFilter;
 import com.kati.core.global.config.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -31,7 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
-@Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 

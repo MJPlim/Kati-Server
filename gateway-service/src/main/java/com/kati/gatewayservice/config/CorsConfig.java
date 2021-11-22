@@ -1,20 +1,7 @@
 package com.kati.gatewayservice.config;
 
 
-import com.google.common.collect.ImmutableList;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
-
-import java.util.Collections;
 
 @Configuration
 public class CorsConfig {
@@ -50,25 +37,25 @@ public class CorsConfig {
 //    private static final String MAX_AGE = "7200"; //2 hours (2 * 60 * 60)
 //
 
-    @Bean
-    public WebFilter corsFilter() {
-        return (ServerWebExchange ctx, WebFilterChain chain) -> {
-            ServerHttpRequest request = ctx.getRequest();
-            ServerHttpResponse response = ctx.getResponse();
-            HttpHeaders headers = response.getHeaders();
-//            headers.setAccessControlAllowCredentials(true);
-            headers.setAccessControlAllowOrigin("*");
-            headers.setAccessControlAllowMethods(ImmutableList.of(HttpMethod.GET, HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE, HttpMethod.HEAD, HttpMethod.OPTIONS));
-            headers.setAccessControlMaxAge(7200);
-            headers.setAccessControlAllowHeaders(Collections.singletonList(CorsConfiguration.ALL));
-            headers.setAccessControlExposeHeaders(Collections.singletonList(CorsConfiguration.ALL));
-            if (request.getMethod().equals(HttpMethod.OPTIONS)) {
-                response.setStatusCode(HttpStatus.OK);
-//                return Mono.empty();
-            }
-            return chain.filter(ctx);
-        };
-    }
+//    @Bean
+//    public WebFilter corsFilter() {
+//        return (ServerWebExchange ctx, WebFilterChain chain) -> {
+//            ServerHttpRequest request = ctx.getRequest();
+//            ServerHttpResponse response = ctx.getResponse();
+//            HttpHeaders headers = response.getHeaders();
+////            headers.setAccessControlAllowCredentials(true);
+//            headers.setAccessControlAllowOrigin("*");
+//            headers.setAccessControlAllowMethods(ImmutableList.of(HttpMethod.GET, HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE, HttpMethod.HEAD, HttpMethod.OPTIONS));
+//            headers.setAccessControlMaxAge(7200);
+//            headers.setAccessControlAllowHeaders(Collections.singletonList(CorsConfiguration.ALL));
+//            headers.setAccessControlExposeHeaders(Collections.singletonList(CorsConfiguration.ALL));
+//            if (request.getMethod().equals(HttpMethod.OPTIONS)) {
+//                response.setStatusCode(HttpStatus.OK);
+////                return Mono.empty();
+//            }
+//            return chain.filter(ctx);
+//        };
+//    }
 
 //    @Bean
 //    public CorsWebFilter corsWebFilter() {
@@ -88,6 +75,23 @@ public class CorsConfig {
 //        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
 //        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
 //        return new CorsWebFilter(urlBasedCorsConfigurationSource);
+//    }
+
+//    @Bean
+//    public CorsFilter corsFilter() {
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowCredentials(true);
+//
+//        List<String> allowedOriginPatterns = new ArrayList<>();
+//        allowedOriginPatterns.add("*");
+//        configuration.setAllowedOriginPatterns(allowedOriginPatterns);
+//        configuration.addExposedHeader("*");
+//        configuration.addAllowedHeader("*");
+//        configuration.addAllowedMethod("*");
+//        source.registerCorsConfiguration("/**", configuration);
+//
+//        return new CorsFilter(source);
 //    }
 
 }
