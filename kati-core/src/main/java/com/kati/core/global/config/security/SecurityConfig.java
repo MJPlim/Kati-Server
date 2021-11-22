@@ -19,6 +19,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
+import org.springframework.web.filter.CorsFilter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -35,6 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final PrincipalOauth2DetailsService principalOauth2DetailsService;
+    private final CorsFilter corsFilter;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -44,6 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                .addFilterBefore(corsFilter, SecurityContextPersistenceFilter.class)
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtTokenProvider))
                 .exceptionHandling()
