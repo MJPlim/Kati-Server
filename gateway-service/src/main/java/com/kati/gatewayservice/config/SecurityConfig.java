@@ -30,21 +30,11 @@ public class SecurityConfig {
                 registry.addMapping("/**")
                         .allowCredentials(true)
                         .allowedOrigins("http://localhost:3000")
+                        .allowedHeaders("*")
+                        .exposedHeaders("*")
                         .allowedMethods("GET", "PUT", "POST", "PATCH", "DELETE", "OPTIONS");
             }
         };
     }
-
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowCredentials(true);
-//        configuration.setAllowedOriginPatterns(Collections.singletonList(CorsConfiguration.ALL));
-//        configuration.addExposedHeader("*");
-//        configuration.addAllowedHeader("*");
-//        configuration.addAllowedMethod("*");
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
 
 }

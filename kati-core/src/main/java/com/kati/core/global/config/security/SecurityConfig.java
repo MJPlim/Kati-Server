@@ -33,7 +33,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final PrincipalOauth2DetailsService principalOauth2DetailsService;
-//    private final CorsFilter corsFilter;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -43,7 +42,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-//                .addFilterBefore(corsFilter, SecurityContextPersistenceFilter.class)
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtTokenProvider))
                 .exceptionHandling()
