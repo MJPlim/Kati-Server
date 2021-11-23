@@ -37,9 +37,7 @@ public class UserController {
     @ApiOperation(value = "회원가입", notes = "사용자가 회원가입을 한다")
     @PostMapping("signup")
     public ResponseEntity<SignUpUserResponse> signup(@Valid @RequestBody SignUpUserRequest dto) {
-        System.out.println("controller: 1");
         User saved = userService.saveUser(dto);
-        System.out.println("controller: 2");
         return ResponseEntity.ok(SignUpUserResponse.builder()
                 .email(saved.getEmail())
                 .message("해당 메일 주소로 이메일 인증 메일을 발송했습니다. 메일 인증을 하시면 회원가입이 완료됩니다.")

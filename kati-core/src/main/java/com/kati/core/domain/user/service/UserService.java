@@ -40,26 +40,18 @@ public class UserService {
     private final EmailUtil emailUtil;
 
     public User saveUser(SignUpUserRequest dto) {
-        System.out.println("service: 1");
         if (emailAuthCodeRepository.existsByEmail(dto.getEmail()))
             throw new EmailNotVerifiedException(UserExceptionMessage.EMAIL_NOT_VERIFIED_EXCEPTION_MESSAGE);
-        System.out.println("service: 2");
         if (userRepository.existsByEmail(dto.getEmail()))
             throw new EmailDuplicateException(UserExceptionMessage.EMAIL_DUPLICATE_EXCEPTION_MESSAGE);
-        System.out.println("service: 3");
         EmailAuthCodeGenerator authCodeGenerator = new EmailAuthCodeGenerator();
-        System.out.println("service: 4");
         String authCode = authCodeGenerator.generateAuthCode();
-        System.out.println("service: 5");
         emailAuthCodeRepository.save(EmailAuthCode.builder()
                 .email(dto.getEmail())
                 .authCode(authCode)
                 .build());
-        System.out.println("service: 6");
         String message = emailUtil.getEmailAuthMessage(dto.getEmail(), authCode);
-        System.out.println("service: 7");
         emailUtil.sendEmail(dto.getEmail(), EmailSubject.EMAIL_AUTH_REQUEST, message);
-        System.out.println("service: 8");
         return userRepository.save(dto.toEntity(passwordEncoder));
     }
 
