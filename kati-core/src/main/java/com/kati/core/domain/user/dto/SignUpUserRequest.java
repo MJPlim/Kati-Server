@@ -4,7 +4,9 @@ import com.kati.core.domain.user.domain.UserProvider;
 import com.kati.core.domain.user.domain.UserRoleType;
 import com.kati.core.domain.user.domain.UserStateType;
 import com.kati.core.domain.user.domain.User;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -15,6 +17,8 @@ import java.time.LocalDate;
 
 @ToString
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SignUpUserRequest {
 
     @Email(message = "이메일 형식에 맞춰 입력해주세요.")

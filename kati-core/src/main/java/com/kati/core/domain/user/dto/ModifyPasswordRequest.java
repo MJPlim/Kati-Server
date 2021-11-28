@@ -1,11 +1,15 @@
 package com.kati.core.domain.user.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ModifyPasswordRequest {
 
     @NotBlank(message = "기존 패스워드를 입력해주세요.")
