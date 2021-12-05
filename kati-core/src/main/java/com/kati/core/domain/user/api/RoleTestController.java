@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class RoleTestController {
 
     private final Environment env;
+    @Value("${message.hello}")
+    private final String testMessage;
 
     @ApiOperation(value = "유저 권한 테스트", notes = "유저의 권한을 테스트한다")
     @GetMapping("/api/v1/user")
@@ -29,7 +31,7 @@ public class RoleTestController {
 
     @GetMapping("/api/health/check")
     public String healthCheck() {
-        return this.env.getProperty("message.hello");
+        return testMessage;
     }
 
 }
