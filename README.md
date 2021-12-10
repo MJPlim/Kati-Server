@@ -35,6 +35,6 @@ KATI는 사용자에게 가공식품의 정보를 제공하여 소비자의 구�
 |:---:|:---:|:---:|
 |![검색](https://user-images.githubusercontent.com/67419004/145495458-727d1750-16c4-4209-a851-0f3347a80f63.jpeg)|![KakaoTalk_Photo_2021-12-02-11-27-42 005](https://user-images.githubusercontent.com/67419004/145495460-2bc09004-bd46-43c5-be8e-aa85bac2d385.jpeg)|![KakaoTalk_Photo_2021-12-02-11-27-42 006](https://user-images.githubusercontent.com/67419004/145495463-02bee4c0-6ecb-4b04-886f-68823b651023.jpeg)|
 
-|찜|카테고리|검색 필터|
+|메인|카테고리|검색 필터|
 |:---:|:---:|:---:|
-|![찜](https://user-images.githubusercontent.com/67419004/145495711-020e8dd5-a955-4cdc-b9c9-572d07ab1f3a.jpeg)|![카테고리](https://user-images.githubusercontent.com/67419004/145495716-59f45efb-27cb-4203-8334-935a3cb70a7e.jpeg)|![검색필터](https://user-images.githubusercontent.com/67419004/145495718-73e4f335-431c-4559-bb69-0dd890770233.jpeg)|
+|![메인](https://user-images.githubusercontent.com/67419004/145495711-020e8dd5-a955-4cdc-b9c9-572d07ab1f3a.jpeg)|![카테고리](https://user-images.githubusercontent.com/67419004/145495716-59f45efb-27cb-4203-8334-935a3cb70a7e.jpeg)|![검색필터](https://user-images.githubusercontent.com/67419004/145495718-73e4f335-431c-4559-bb69-0dd890770233.jpeg)|
